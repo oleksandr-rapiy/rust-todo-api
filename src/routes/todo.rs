@@ -1,5 +1,10 @@
+use rocket::form::Form;
+use rocket::serde::json::Json;
 use rocket::{delete, get, post, put};
 use rocket_okapi::openapi;
+use crate::domain::todo::Todo;
+use crate::storage::todo_storage::ToDoStorage;
+
 
 #[openapi(tag = "Todo")]
 #[get("/todo")]
@@ -9,14 +14,21 @@ pub fn get_all() -> &'static str {
 
 #[openapi(tag = "Todo")]
 #[get("/todo/<id>")]
-pub fn get_by_id(id: i32) -> &'static str {
-    "Hello, world!"
+pub async fn get_by_id(id: u64) -> Json<Todo> {
+    let storage = ToDoStorage::new().await.unwrap();
+
+    let todo = storage.get_by_id(&id).await.unwrap();
+
+    return Json(todo);
 }
 
 #[openapi(tag = "Todo")]
 #[post("/todo", format = "application/json", data = "<todo>")]
-pub fn create(todo: String) -> &'static str {
-    "Hello, world!"
+pub async fn create(todo: Json<Todo>) -> Json<Todo> {
+    let storage = ToDoStorage::new().await.unwrap();
+    let todo = storage.create(todo.0).await.unwrap();
+
+    return Json(todo);
 }
 
 #[openapi(tag = "Todo")]

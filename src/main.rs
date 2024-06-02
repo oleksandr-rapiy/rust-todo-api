@@ -5,6 +5,7 @@ use rocket_okapi::{openapi_get_routes, swagger_ui::*};
 
 mod domain;
 mod routes;
+mod storage;
 
 #[rocket::main]
 async fn main() -> Result<(), rocket::Error> {
@@ -21,7 +22,7 @@ async fn main() -> Result<(), rocket::Error> {
             "/api/",
             todo_routes,
         )
-        .mount("/swagger/", make_swagger_ui(&SwaggerUIConfig{
+        .mount("/swagger/", make_swagger_ui(&SwaggerUIConfig {
             url: "../api/openapi.json".to_string(),
             ..Default::default()
         }))
